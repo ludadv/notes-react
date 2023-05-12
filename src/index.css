@@ -1,5 +1,15 @@
+@import-normalize;
+html {
+  -webkit-font-smoothing: antialiased;
+  height: auto;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  min-width: 320px;
+  position: relative;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -11,3 +21,28 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.app {
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+button,
+input {
+  box-shadow: none;
+  box-sizing: border-box;
+  cursor: pointer;
+  outline: none;
+  border: none;
+}
+
+svg {
+  display: inline-block;
+  vertical-align: center;
+}
+
