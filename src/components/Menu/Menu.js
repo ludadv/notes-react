@@ -4,11 +4,10 @@ import {ReactComponent as Basket} from '../../svg/basket.svg';
 import {ReactComponent as Edit} from '../../svg/edit.svg';
 
 // Hooks
-
 // styles
 import "./MenuStyle.scss";
 
-function Menu({allNotes, handleAddNote, handleDeleteNote}) {
+function Menu({allNotes, handleAddNote, handleDeleteNote, handleEditNote}) {
     return (
         <div className='menu'>
             <div className='menu__list'>
@@ -29,7 +28,7 @@ function Menu({allNotes, handleAddNote, handleDeleteNote}) {
                 </button>
                 <button
                     disabled={allNotes.length === 0}
-                    // onClick={handleEditNote}
+                    onClick={() => handleEditNote()}
                     type='text'
                     className='menu__item'
                 >

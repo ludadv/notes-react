@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Header from "./components/Header/Header";
 import Workspace from "./components/Workspace/Workspace";
 
@@ -9,13 +9,16 @@ import {initDB, useIndexedDB} from 'react-indexed-db';
 initDB(DBConfig);
 
 const App: React.FC = () => {
-    const { add, getAll, deleteRecord, update, getByIndex, openCursor  } = useIndexedDB('notes');
+    const { add, getAll, deleteRecord, update  } = useIndexedDB('notes');
 
     const [note, setNote] = useState('');
     const [noteActiveId, setNoteActiveId] = useState();
     const [allNotes, setAllNotes] = useState([]);
     const [searchValue, setSearchValue] = useState('');
     const [filteredNotes, setFilteredNotes] = useState([]);
+    const [readOnly, setReadOnly] = useState(true);
+
+    const inputElement = useRef(null);
 
     const changeValueNote = (note) => {
         setNote(note);
@@ -31,10 +34,7 @@ const App: React.FC = () => {
                 }
             );
         }
-        console.log('noteActiveId', noteActiveId);
     }
-
-
     const updateListNotes = (allNotes) => {
         setAllNotes(allNotes.sort((a, b) => {
             return b.id - a.id
@@ -43,6 +43,14 @@ const App: React.FC = () => {
     const setActiveNote = (item) => {
         setNoteActiveId(item.id);
         setNote(item.title);
+        if (inputElement.current) {
+            inputElement.current.focus();
+        }
+        if (item.title.length === 0) {
+            setReadOnly(false);
+        } else {
+            setReadOnly(true);
+        }
     }
 
     //actions with storage
@@ -60,14 +68,21 @@ const App: React.FC = () => {
         );
     }
     const handleDeleteNote = () => {
-        deleteRecord(noteActiveId).then(() => {
-            setNote('');
-            getAll().then(personsFromDB => {
-                updateListNotes(personsFromDB);
+        if (noteActiveId) {
+            deleteRecord(noteActiveId).then(() => {
+                setNote('');
+                getAll().then(personsFromDB => {
+                    updateListNotes(personsFromDB);
+                });
             });
-        });
+        }
     }
-
+    const handleEditNote = () => {
+        if (inputElement.current && noteActiveId) {
+            inputElement.current.focus();
+            setReadOnly(false);
+        }
+    }
     const handleSearchChange = (element) => {
         setSearchValue(element);
         if (!element) {
@@ -82,7 +97,6 @@ const App: React.FC = () => {
                 }
                 setFilteredNotes([]);
             });
-            console.log('filteredNotes', filteredNotes);
             updateListNotes(filteredNotes);
         }
     }
@@ -97,8 +111,10 @@ const App: React.FC = () => {
             <Header
                 allNotes={allNotes}
                 searchValue={searchValue}
+                noteActiveId={noteActiveId}
                 handleAddNote={handleAddNote}
                 handleDeleteNote={handleDeleteNote}
+                handleEditNote={handleEditNote}
                 handleSearchChange={handleSearchChange}
             />
             <Workspace
@@ -108,6 +124,9 @@ const App: React.FC = () => {
                 allNotes={allNotes}
                 updateListNotes={updateListNotes}
                 setActiveNote={setActiveNote}
+                inputElement={inputElement}
+                readOnly={readOnly}
+
             />
 
         </div>
