@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
+import moment from "moment";
 import Header from "./components/Header/Header";
 import Workspace from "./components/Workspace/Workspace";
 
@@ -17,13 +18,14 @@ const App: React.FC = () => {
     const [searchValue, setSearchValue] = useState('');
     const [filteredNotes, setFilteredNotes] = useState([]);
     const [readOnly, setReadOnly] = useState(true);
+    const [createDate, setCreateDate] = useState('');
 
     const inputElement = useRef(null);
 
     const changeValueNote = (note) => {
         setNote(note);
         if (noteActiveId) {
-            update({ id: noteActiveId, title: note }).then(
+            update({ id: noteActiveId, title: note, date: createDate }).then(
                 () => {
                     getAll().then(personsFromDB => {
                         updateListNotes(personsFromDB);
@@ -43,6 +45,7 @@ const App: React.FC = () => {
     const setActiveNote = (item) => {
         setNoteActiveId(item.id);
         setNote(item.title);
+        setCreateDate(item.date);
         if (inputElement.current) {
             inputElement.current.focus();
         }
@@ -55,9 +58,10 @@ const App: React.FC = () => {
 
     //actions with storage
     const handleAddNote = () => {
-        add({ title: '' }).then(
-            (id, z) => {
-                setActiveNote({ id, title: '' });
+        let date = moment().format('LLL');
+        add({ title: '', date: date}).then(
+            (id) => {
+                setActiveNote({ id, title: '', date: date});
                 getAll().then(personsFromDB => {
                     updateListNotes(personsFromDB);
                 });
@@ -67,6 +71,7 @@ const App: React.FC = () => {
             }
         );
     }
+
     const handleDeleteNote = () => {
         if (noteActiveId) {
             deleteRecord(noteActiveId).then(() => {
@@ -120,13 +125,13 @@ const App: React.FC = () => {
             <Workspace
                 note={note}
                 noteActiveId={noteActiveId}
+                createDate={createDate}
                 changeValueNote={changeValueNote}
                 allNotes={allNotes}
                 updateListNotes={updateListNotes}
                 setActiveNote={setActiveNote}
                 inputElement={inputElement}
                 readOnly={readOnly}
-
             />
 
         </div>

@@ -3,7 +3,6 @@ import {ReactComponent as Add} from '../../svg/add.svg';
 import {ReactComponent as Basket} from '../../svg/basket.svg';
 import {ReactComponent as Edit} from '../../svg/edit.svg';
 
-// Hooks
 // styles
 import "./MenuStyle.scss";
 
